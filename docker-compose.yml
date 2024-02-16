@@ -1,0 +1,54 @@
+version: "3.5"
+services:
+  app:
+    image: listmonk/listmonk:latest
+    restart: unless-stopped
+    command: [sh, -c, "yes | ./listmonk --upgrade --config config.toml && ./listmonk --config config.toml"]
+    depends_on:
+      - db
+    environment:
+      - TZ=Europe/Berlin
+      - LISTMONK_app__address=0.0.0.0:9000
+      - LISTMONK_app__admin_username
+      - LISTMONK_app__admin_password
+      - LISTMONK_db__host=db
+      - LISTMONK_db__port=5432
+      - LISTMONK_db__user=listmonk
+      - LISTMONK_db__password=listmonk
+      - LISTMONK_db__database=listmonk
+      - LISTMONK_db__ssl_mode=disable
+    volumes:
+      - app_uploads:/listmonk/uploads
+    networks:
+      proxy_apps:
+      default:
+    labels:
+      backups: "true"
+
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=listmonk
+      - POSTGRES_PASSWORD=listmonk
+      - POSTGRES_DB=listmonk
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      default:
+    labels:
+      backups: "true"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listmonk"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+volumes:
+  app_uploads:
+  db_data:
+
+networks:
+  proxy_apps:
+    name: proxy_apps
+    external: true
