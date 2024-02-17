@@ -24,6 +24,7 @@ services:
       default:
     labels:
       backups: "true"
+      
 
   db:
     image: postgres:16-alpine
@@ -36,13 +37,25 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       default:
-    labels:
-      backups: "true"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U listmonk"]
       interval: 10s
       timeout: 5s
       retries: 6
+    labels:
+      backups: "true"
+      ofelia.enabled: "true"
+      ofelia.job-exec.backupcron.schedule: "0 0 1 * * *"
+      ofelia.job-exec.backupcron.command: "pg_dumpall -U listmonk -f /var/lib/postgresql/data/backup.sql"
+
+  cron:
+    image: mcuadros/ofelia:latest
+    depends_on:
+      - db
+    command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
 volumes:
   app_uploads:
@@ -52,3 +65,4 @@ networks:
   proxy_apps:
     name: proxy_apps
     external: true
+
