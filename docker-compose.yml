@@ -22,8 +22,6 @@ services:
     networks:
       proxy_apps:
       default:
-    labels:
-      backups: "true"
 
 
   db:
@@ -44,7 +42,6 @@ services:
       timeout: 5s
       retries: 6
     labels:
-      backups: "true"
       ofelia.enabled: "true"
       ofelia.job-exec.backupcron.schedule: "0 0 1 * * *"
       ofelia.job-exec.backupcron.command: "sh /scripts/backup.sh"
