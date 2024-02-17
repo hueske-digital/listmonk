@@ -26,7 +26,7 @@ services:
       backups: "true"
 
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_USER=listmonk
