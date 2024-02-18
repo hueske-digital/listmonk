@@ -33,7 +33,6 @@ services:
       - POSTGRES_DB=listmonk
     volumes:
       - db_data:/var/lib/postgresql/data
-      - $PWD/backup.sh:/scripts/backup.sh:ro
     networks:
       default:
     healthcheck:
@@ -42,18 +41,10 @@ services:
       timeout: 5s
       retries: 6
     labels:
+      ofelia.restart: "true"
       ofelia.enabled: "true"
-      ofelia.job-exec.backupcron.schedule: "0 0 1 * * *"
-      ofelia.job-exec.backupcron.command: "sh /scripts/backup.sh"
-
-  cron:
-    image: mcuadros/ofelia:latest
-    depends_on:
-      - db
-    command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      ofelia.job-exec.listmonkdbbackup.schedule: "0 0 1 * * *"
+      ofelia.job-exec.listmonkdbbackup.command: "sh -c 'pg_dumpall -U $POSTGRES_USER -f /var/lib/postgresql/data/backup.sql'"
 
 volumes:
   app_uploads:
@@ -63,4 +54,3 @@ networks:
   proxy_apps:
     name: proxy_apps
     external: true
-
