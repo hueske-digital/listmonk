@@ -4,7 +4,8 @@ services:
     restart: unless-stopped
     command: [sh, -c, "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''"]
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - TZ=Europe/Berlin
       - LISTMONK_app__address=0.0.0.0:9000
