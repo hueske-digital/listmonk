@@ -8,8 +8,6 @@ services:
     environment:
       - TZ=Europe/Berlin
       - LISTMONK_app__address=0.0.0.0:9000
-      - LISTMONK_app__admin_username
-      - LISTMONK_app__admin_password
       - LISTMONK_db__host=db
       - LISTMONK_db__port=5432
       - LISTMONK_db__user=listmonk
