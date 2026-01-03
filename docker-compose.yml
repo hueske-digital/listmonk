@@ -15,11 +15,14 @@ services:
       - LISTMONK_db__password=listmonk
       - LISTMONK_db__database=listmonk
       - LISTMONK_db__ssl_mode=disable
+      - CADDY_DOMAIN=${CADDY_DOMAIN}
+      - CADDY_TYPE=${CADDY_TYPE:-external}
+      - CADDY_PORT=${CADDY_PORT:-9000}
     volumes:
       - app_uploads:/listmonk/uploads
     networks:
-      proxy_apps:
-      default:
+      - caddy
+      - default
 
 
   db:
@@ -49,6 +52,5 @@ volumes:
   db_data:
 
 networks:
-  proxy_apps:
-    name: proxy_apps
-    external: true
+  caddy:
+  default:
