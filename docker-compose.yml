@@ -18,6 +18,7 @@ services:
       - CADDY_DOMAIN=${CADDY_DOMAIN}
       - CADDY_TYPE=${CADDY_TYPE:-external}
       - CADDY_PORT=${CADDY_PORT:-9000}
+      - CADDY_TLS=${CADDY_TLS:-true}
     volumes:
       - app_uploads:/listmonk/uploads
     networks:
